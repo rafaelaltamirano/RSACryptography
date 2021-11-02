@@ -3,30 +3,21 @@ package com.example.pruebarsa;
 import android.util.Base64;
 import android.util.Log;
 
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.KeySpec;
-import java.security.spec.X509EncodedKeySpec;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class RSA {
-
 
     private KeyPairGenerator kpg;
     private KeyPair kp;
     private PublicKey publicKey;
     private PrivateKey privateKey;
-
     private String descryptedString;
     private byte[] encrytedByte;
     private byte[] descryptedByte;
@@ -40,7 +31,9 @@ public class RSA {
     private String message = "yolanda@yopmail.com";
     private final static String publicKeyFull = "-----BEGIN PUBLIC KEY----$PUBLICKEY-----END PUBLIC KEY-----";
 
-
+    /**
+     * Esta función genera una clave publica y privada aleatoria, se utiliza para pruebas ya que estas claves deben ser proporcionadas por backend
+     */
     public void generateKayPair() throws Exception {
         kpg = KeyPairGenerator.getInstance(CRYPTO_METHOD);
         kpg.initialize(CRYPTO_BITS);
@@ -50,69 +43,32 @@ public class RSA {
         privateKey = kp.getPrivate();
         Log.d("TAG1", "private key -> " + privateKey);
     }
-
+    /**
+     * Esta función códifica un mensaje.
+     * @param mensajeAEncriptar mensaje a encriptar
+     * @return mensaje encriptado en base64
+     */
     public String encrypt(String mensajeAEncriptar, KeySpec Key) throws Exception {
 
         cipher = Cipher.getInstance(OPCION_RSA);
-
-//        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Key.getBytes(StandardCharsets.UTF_8));
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PublicKey publicKey = keyFactory.generatePublic(Key);
-
+       // KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+      //  PublicKey publicKey = keyFactory.generatePublic(Key);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         encrytedByte = cipher.doFinal(mensajeAEncriptar.getBytes());
         return Base64.encodeToString(encrytedByte, Base64.DEFAULT);
     }
-
-    public String descrypt(String result,KeySpec Key) throws Exception {
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PrivateKey privateKey = keyFactory.generatePrivate(Key);
+    /**
+     * Esta función decódifica un mensaje.
+     * @param  mensajeEncriptado a desencriptar
+     * @return mensaje encriptado
+     */
+    public String descrypt(String mensajeEncriptado, KeySpec Key) throws Exception {
+//        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+//        PrivateKey privateKey = keyFactory.generatePrivate(Key);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        descryptedByte = cipher.doFinal(Base64.decode(result, Base64.DEFAULT));
+        descryptedByte = cipher.doFinal(Base64.decode(mensajeEncriptado, Base64.DEFAULT));
         descryptedString = new String(descryptedByte);
         return descryptedString;
 
     }
-
-//    public String
-//    String publicKeyPemStr = getKey("public.pem");
-//
-//    publicKeyPemStr = publicKeyPemStr.replace("-----BEGIN PUBLIC KEY-----\n", "");
-//    publicKeyPemStr = publicKeyPemStr.replace("-----END PUBLIC KEY-----", "");
-//    byte[] encoded = Base64.decode(publicKeyPemStr, Base64.DEFAULT);
-//
-//    X509EncodedKeySpec  keySpec = new X509EncodedKeySpec(encoded);
-//    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//    PublicKey publicKey = keyFactory.generatePublic(keySpec);
-
-
-
-
-    public byte[] RSAEncrypt(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        kpg = KeyPairGenerator.getInstance("RSA");
-        kpg.initialize(2048);
-        kp = kpg.genKeyPair();
-        publicKey = kp.getPublic();
-        privateKey = kp.getPrivate();
-
-        cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        encrytedByte = cipher.doFinal(plain.getBytes());
-
-        return encrytedByte;
-    }
-
-    public String RSADecrypt(final byte[] encryptedBytes) throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-
-        cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        descryptedByte = cipher.doFinal(encryptedBytes);
-        String decrypted = new String(descryptedByte);
-        System.out.println("DDecrypted?????" + decrypted);
-        return decrypted;
-    }
-
 }
-

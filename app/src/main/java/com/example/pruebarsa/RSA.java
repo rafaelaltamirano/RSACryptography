@@ -26,7 +26,7 @@ public class RSA {
     private final static String CRYPTO_METHOD = "RSA";
     private final static int CRYPTO_BITS = 2048;
     private final static String OPCION_RSA = "RSA/ECB/PKCS1PADDING";
-    private String message = "yolanda@yopmail.com";
+
 
     /**
      * Esta función genera una clave publica y privada aleatoria, se utiliza para pruebas ya que estas claves deben ser proporcionadas por API
